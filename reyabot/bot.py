@@ -61,7 +61,7 @@ def open_orders(message):
             bot.reply_to(message, "Wallet address not implemented. Please use /address to add your wallet address.")
 
 
-        account_orders = Get_orders(addr_result)["positions"] # Receive open orders from this address
+        account_orders = Get_orders(addr_result)[0]["positions"] # Receive open orders from this address
         if not account_orders:
             bot.reply_to(message, "❌ No open positions.")
         else:
@@ -75,7 +75,7 @@ def open_orders(message):
                     f"🪙 *Market*: {market_symbol}\n"
                     f"📈 / 📉 *LONG/SHORT*: {positions['side'].upper()}\n"
                     f"🏷️ *Entry Price*: {positions['price']:.4f}\n"
-                    f"📊 *Live PnL*: {positions['livePnL']:.2f}*\n"
+                    f"📊 *Live PnL*: {positions['livePnL']:.2f}\n"
                     f"🚨 *Liq. Price*:  {positions['liquidationPrice']:.4f}\n"
                     "---------------------\n"
                     "Keep up the great work!"
