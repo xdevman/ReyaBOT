@@ -5,7 +5,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
 from dotenv import load_dotenv
 # from rsdk import cprice
-from rapi import Get_Reya_api,get_price
+from rapi import Get_Reya_api,get_price,Get_orders, get_ticker_by_market_id
 from database2 import *
 from elixir_api import update_elixir_rank
 
@@ -32,7 +32,7 @@ def send_welcome(message):
     bot.reply_to(message, "Welcome! Use /price [coin] to get price info.")
 
 
-@bot.message_handler(commands=['price'])
+@bot.message_handler(commands=['price','p'])
 def send_price(message):
     args = message.text.split()  # Split message text
     if len(args) == 1:  # If just /price is used
@@ -47,6 +47,51 @@ def send_price(message):
         pricex = get_price(coin)
         # bot.reply_to(message, f"*{coin}*\n`$ {float(pricex):.2f}`\n\n[🚀 Trade on reya dex](https://app.reya.xyz/?referredBy=q4b99uc9)", parse_mode="Markdown")
         bot.reply_to(message, f"{pricex}\n\n[🚀 Trade on reya dex](https://app.reya.xyz/?referredBy=q4b99uc9)", parse_mode="Markdown")
+
+
+@bot.message_handler(commands=['orders'])
+def open_orders(message):
+    user_id = message.from_user.id
+    try:
+        addr_result = get_wallet_address(user_id)
+
+        print("addr: ",addr_result)
+
+        if addr_result == "null":
+            bot.reply_to(message, "Wallet address not implemented. Please use /address to add your wallet address.")
+
+
+        account_orders = Get_orders(addr_result)["positions"] # Receive open orders from this address
+        if not account_orders:
+            bot.reply_to(message, "❌ No open positions.")
+        else:
+            all_positions = []
+            for positions in account_orders:
+                market_symbol = get_ticker_by_market_id(positions['marketId'])
+                formatted_message = (
+
+                    "*OPEN ORDERS*\n"
+                    
+                    f"🪙 *Market*: {market_symbol}\n"
+                    f"📈 / 📉 *LONG/SHORT*: {positions['side'].upper()}\n"
+                    f"🏷️ *Entry Price*: {positions['price']:.4f}\n"
+                    f"📊 *Live PnL*: {positions['livePnL']:.2f}*\n"
+                    f"🚨 *Liq. Price*:  {positions['liquidationPrice']:.4f}\n"
+                    "---------------------\n"
+                    "Keep up the great work!"
+                    )
+                all_positions.append(formatted_message)
+            final_message = "\n".join(all_positions)
+            bot.reply_to(message, formatted_message, parse_mode='Markdown')
+
+    except Exception as e:
+        print("except Error",e)
+        bot.reply_to(message,"Bot updated! Please type /start again to continue using it",)
+
+
+
+
+
 
 @bot.message_handler(commands=['address'])
 def set_address(message):

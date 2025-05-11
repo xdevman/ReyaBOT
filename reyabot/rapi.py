@@ -63,3 +63,26 @@ def get_price(symbol):
         if entry["ticker"].startswith(symbol):
             return format_price_data(entry)
     return f"No data found for {symbol}"
+
+def get_ticker_by_market_id(market_id):
+    url = "https://api.reya.xyz/api/markets/"
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        markets = response.json()
+        for market in markets:
+            if str(market["id"]) == str(market_id):
+                return market["ticker"]
+        return None
+    else:
+        raise Exception(f"API Error: {response.status_code}")
+
+def Get_orders(wallet_address):
+    url = f"https://api.reya.xyz/api/accounts/{wallet_address}"
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
+        raise Exception(f"API Error: {response.status_code}")
