@@ -66,7 +66,7 @@ def open_orders(message):
             bot.reply_to(message, "❌ No open positions.")
         else:
             all_positions = []
-            for positions in account_orders:
+            for positions in account_orders[:5]:
                 market_symbol = get_ticker_by_market_id(positions['marketId'])
                 formatted_message = (
 
@@ -82,7 +82,7 @@ def open_orders(message):
                     )
                 all_positions.append(formatted_message)
             final_message = "\n".join(all_positions)
-            bot.reply_to(message, formatted_message, parse_mode='Markdown')
+            bot.reply_to(message, final_message, parse_mode='Markdown')
 
     except Exception as e:
         print("except Error",e)
