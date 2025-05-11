@@ -49,7 +49,7 @@ def send_price(message):
         bot.reply_to(message, f"{pricex}\n\n[🚀 Trade on reya dex](https://app.reya.xyz/?referredBy=q4b99uc9)", parse_mode="Markdown")
 
 
-@bot.message_handler(commands=['orders'])
+@bot.message_handler(commands=['positions'])
 def open_orders(message):
     user_id = message.from_user.id
     try:
@@ -73,12 +73,12 @@ def open_orders(message):
                     "*OPEN ORDERS*\n"
                     
                     f"🪙 *Market*: {market_symbol}\n"
-                    f"📈 / 📉 *LONG/SHORT*: {positions['side'].upper()}\n"
+                    f"📈 *LONG/SHORT*: {positions['side'].upper()}\n"
                     f"🏷️ *Entry Price*: {positions['price']:.4f}\n"
                     f"📊 *Live PnL*: {positions['livePnL']:.2f}\n"
                     f"🚨 *Liq. Price*:  {positions['liquidationPrice']:.4f}\n"
                     "---------------------\n"
-                    "Keep up the great work!"
+
                     )
                 all_positions.append(formatted_message)
             final_message = "\n".join(all_positions)
@@ -87,9 +87,6 @@ def open_orders(message):
     except Exception as e:
         print("except Error",e)
         bot.reply_to(message,"Bot updated! Please type /start again to continue using it",)
-
-
-
 
 
 
