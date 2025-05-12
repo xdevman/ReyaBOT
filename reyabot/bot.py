@@ -143,7 +143,7 @@ def get_leaderboard(message):
         "*Leaderboard*\n"
         "---------------------\n"
         f"💰 *Deposit*: {XpData['deposit']:.2f}\n"
-        f"📊 *Trading XP*: {XpData['tradingXp']}\n"
+        f"📊 *Trading XP*: {XpData['tradingXp']:,.2f}\n"
         f"🏆 *XP Earned*: {XpData['Xp earned']:,.2f}\n"
         f"🏆 *Weekly Rank*: {XpData['WeeklyRank']} *{XpData['Rank']}*\n"
         f"🏆 *Elixir Rank*: {elixir_data}\n"
