@@ -137,8 +137,8 @@ def get_leaderboard(message):
 
         else:
             XpData = Get_Reya_api(addr_result) #Get Xp Data
-            elixir_data = update_elixir_rank(user_id)
-            print("elixir_data:",elixir_data)
+            # elixir_data = update_elixir_rank(user_id)
+            # print("elixir_data:",elixir_data)
             formatted_message = (
         "*Leaderboard*\n"
         "---------------------\n"
@@ -146,7 +146,7 @@ def get_leaderboard(message):
         f"📊 *Trading XP*: {XpData['tradingXp']:,.2f}\n"
         f"🏆 *XP Earned*: {XpData['Xp earned']:,.2f}\n"
         f"🏆 *Weekly Rank*: {XpData['WeeklyRank']} *{XpData['Rank']}*\n"
-        f"🏆 *Elixir Rank*: {elixir_data}\n"
+        # f"🏆 *Elixir Rank*: {elixir_data}\n"
         "---------------------\n"
         "Keep up the great work!"
     )
