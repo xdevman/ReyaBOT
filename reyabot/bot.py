@@ -87,8 +87,7 @@ def open_orders(message):
             
             for positions in account_orders:
                 market_symbol = get_ticker_by_market_id(positions['marketId'])
-                print(market_symbol)
-                print(symbol_result)
+
                 if market_symbol == symbol_result :
                     formatted_message = ORDER_TEMPLATE.format(
                         market=market_symbol,
