@@ -5,7 +5,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
 from dotenv import load_dotenv
 # from rsdk import cprice
-from rapi import Get_Reya_api,get_price,Get_orders, get_ticker_by_market_id
+from rapi import Get_Reya_api,get_price,Get_orders, get_symbol, get_ticker_by_market_id
 from database2 import *
 from elixir_api import update_elixir_rank
 
@@ -79,20 +79,30 @@ def open_orders(message):
         
         elif len(args) == 2:
             coin = args[1].upper()
-
-            market_symbol = get_ticker_by_market_id(positions['marketId'])
-            if str(market_symbol).startswith(coin):
-                formatted_message = ORDER_TEMPLATE.format(
-                    market=market_symbol,
-                    side=positions['side'].upper(),
-                    price=positions['price'],
-                    pnl=positions['livePnL'],
-                    liq_price=positions['liquidationPrice'],
-                    )
-                bot.reply_to(message, formatted_message, parse_mode='Markdown')
-            else:
+            all_positions = []
+            symbol_result = get_symbol(coin)
+            if symbol_result is None:
                 bot.reply_to(message, "❌ Invalid Token Symbol")
-        
+                return
+            
+            for positions in account_orders:
+                market_symbol = get_ticker_by_market_id(positions['marketId'])
+                print(market_symbol)
+                print(symbol_result)
+                if market_symbol == symbol_result :
+                    formatted_message = ORDER_TEMPLATE.format(
+                        market=market_symbol,
+                        side=positions['side'].upper(),
+                        price=positions['price'],
+                        pnl=positions['livePnL'],
+                        liq_price=positions['liquidationPrice'],
+                        )
+                    
+                    bot.reply_to(message, formatted_message, parse_mode='Markdown')
+                    return
+
+            bot.reply_to(message, "❌ No open position found for the specified symbol.")
+            
         else:
             all_positions = []
             for positions in account_orders[:5]:

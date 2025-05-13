@@ -86,3 +86,18 @@ def Get_orders(wallet_address):
         return data
     else:
         raise Exception(f"API Error: {response.status_code}")
+
+def get_symbol(symbol):
+
+    url = f"https://api.reya.xyz/api/markets/"
+    r = requests.get(url)
+
+    if r.status_code == 200:
+        data = r.json()
+    else:
+        return None
+    symbol = symbol.upper()
+    for entry in data:
+        if entry["ticker"].startswith(symbol):
+            return entry["ticker"]
+    return None
