@@ -61,7 +61,7 @@ def get_price(symbol):
     symbol = symbol.upper()
     for entry in data:
         t = str(entry["ticker"]).upper()
-        if entry["ticker"].startswith(symbol):
+        if t.startswith(symbol):
             return format_price_data(entry)
     return f"No data found for {symbol}"
 
