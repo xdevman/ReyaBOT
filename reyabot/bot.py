@@ -52,6 +52,17 @@ def send_price(message):
 @bot.message_handler(commands=['positions'])
 def open_orders(message):
     user_id = message.from_user.id
+    args = message.text.split()
+
+    ORDER_TEMPLATE = (
+        "*OPEN ORDERS*\n"
+        "🪙 *Market*: {market}\n"
+        "📈 *LONG/SHORT*: {side}\n"
+        "🏷️ *Entry Price*: {price:.4f}\n"
+        "📊 *Live PnL*: {pnl:.2f}\n"
+        "🚨 *Liq. Price*:  {liq_price:.4f}\n"
+        "---------------------\n"
+    )
     try:
         addr_result = get_wallet_address(user_id)
 
@@ -60,26 +71,40 @@ def open_orders(message):
         if addr_result == "null":
             bot.reply_to(message, "Wallet address not implemented. Please use /address to add your wallet address.")
 
-
         account_orders = Get_orders(addr_result)[0]["positions"] # Receive open orders from this address
+
+
         if not account_orders:
             bot.reply_to(message, "❌ No open positions.")
+        
+        elif len(args) == 2:
+            coin = args[1].upper()
+
+            market_symbol = get_ticker_by_market_id(positions['marketId'])
+            if str(market_symbol).startswith(coin):
+                formatted_message = ORDER_TEMPLATE.format(
+                    market=market_symbol,
+                    side=positions['side'].upper(),
+                    price=positions['price'],
+                    pnl=positions['livePnL'],
+                    liq_price=positions['liquidationPrice'],
+                    )
+                bot.reply_to(message, formatted_message, parse_mode='Markdown')
+            else:
+                bot.reply_to(message, "❌ Invalid Token Symbol")
+        
         else:
             all_positions = []
             for positions in account_orders[:5]:
                 market_symbol = get_ticker_by_market_id(positions['marketId'])
-                formatted_message = (
-
-                    "*OPEN ORDERS*\n"
-                    
-                    f"🪙 *Market*: {market_symbol}\n"
-                    f"📈 *LONG/SHORT*: {positions['side'].upper()}\n"
-                    f"🏷️ *Entry Price*: {positions['price']:.4f}\n"
-                    f"📊 *Live PnL*: {positions['livePnL']:.2f}\n"
-                    f"🚨 *Liq. Price*:  {positions['liquidationPrice']:.4f}\n"
-                    "---------------------\n"
-
+                formatted_message = ORDER_TEMPLATE.format(
+                    market=market_symbol,
+                    side=positions['side'].upper(),
+                    price=positions['price'],
+                    pnl=positions['livePnL'],
+                    liq_price=positions['liquidationPrice'],
                     )
+                
                 all_positions.append(formatted_message)
             final_message = "\n".join(all_positions)
             bot.reply_to(message, final_message, parse_mode='Markdown')
