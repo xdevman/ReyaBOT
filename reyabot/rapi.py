@@ -60,6 +60,7 @@ def get_price(symbol):
         return f"Request failed with status code {r.status_code}" 
     symbol = symbol.upper()
     for entry in data:
+        t = str(entry["ticker"]).upper()
         if entry["ticker"].startswith(symbol):
             return format_price_data(entry)
     return f"No data found for {symbol}"
@@ -98,6 +99,7 @@ def get_symbol(symbol):
         return None
     symbol = symbol.upper()
     for entry in data:
-        if entry["ticker"].startswith(symbol):
+        t = str(entry["ticker"]).upper()
+        if t.startswith(symbol):
             return entry["ticker"]
     return None
