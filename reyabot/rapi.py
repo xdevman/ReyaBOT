@@ -116,7 +116,7 @@ def save_latest_orderid(userid,wallet_address):
         if r.status_code == 200:
             data = r.json()
             if len(data) == 0:
-                return None
+                return True
             
             print(data, data[0]["orderId"])
             result_orderid = update_order_id(userid, data[0]["orderId"])
