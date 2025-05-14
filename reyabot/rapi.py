@@ -1,7 +1,7 @@
 import requests
 import json
 
-from reyabot.database2 import switch_alarm_status, update_order_id
+from database2 import switch_alarm_status, update_order_id
 
 
 def Get_Reya_api(wallet_address):
