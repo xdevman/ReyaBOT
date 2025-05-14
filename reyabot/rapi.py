@@ -108,12 +108,16 @@ def get_symbol(symbol):
 
 def save_latest_orderid(userid,wallet_address):
     result = switch_alarm_status(userid)
+    print("switch alarm result : ", result)
     if result is True:
         url = f"https://api.reya.xyz/api/conditional-orders/get-orders-by-wallet/{wallet_address}"
         r = requests.get(url)
 
         if r.status_code == 200:
             data = r.json()
+            if len(data) == 0:
+                return None
+            
             print(data, data[0]["orderId"])
             result_orderid = update_order_id(userid, data[0]["orderId"])
             if result_orderid:
