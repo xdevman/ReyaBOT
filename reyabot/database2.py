@@ -122,6 +122,13 @@ def switch_alarm_status(user_id):
         session.rollback()
         return f"Error: {e}"
     
+
+# Get the latest_order_id from DB
+def get_latest_order_id(user_id):
+    user = session.query(User).filter_by(user_id=user_id).first()
+    return user.orderid if user else None
+
+
 def update_order_id(user_id, new_order_id):
     try:
         user = session.query(User).filter_by(userid=user_id).first()

@@ -1,11 +1,12 @@
 #!/usr/bin/python
 
+import threading
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
 from dotenv import load_dotenv
 # from rsdk import cprice
-from rapi import Get_Reya_api,get_price,Get_orders, get_symbol, get_ticker_by_market_id, save_latest_orderid
+from rapi import Get_Reya_api,get_price,Get_orders, get_symbol, get_ticker_by_market_id, get_transactions, save_latest_orderid
 from database2 import *
 from elixir_api import update_elixir_rank
 
@@ -227,6 +228,43 @@ def send_links(message):
 
     bot.send_message(message.chat.id, "🔗 **Reya Information**", reply_markup=markup, parse_mode="Markdown")
 
+def monitor_orders():
+    while True:
+        try:
+            users = session.query(User).filter(User.alarm == True).all()
+            for user in users:
+                wallet = user.wallet_address
+                user_id = user.user_id
+                latest_saved_id = user.orderid
 
+                # Replace this with your real function to get all recent orders
+                orders = get_transactions(wallet)  # ← you must define or use existing function
+
+                if not orders:
+                    continue
+
+                # Assume the latest order is first (sorted descending by time)
+                latest_order = orders[0]
+                current_latest_id = latest_order['orderid']
+
+                # If first time, just store and skip alert
+                # if latest_saved_id is None:
+                #     update_order_id(user_id, current_latest_id, session)
+                #     continue
+
+                # If new order detected
+                if current_latest_id != latest_saved_id:
+                    update_order_id(user_id, current_latest_id, session)
+
+                    # Notify user about the new order
+                    bot.send_message(user_id, f"🚨 New order detected!\nOrder ID: {current_latest_id}")
+        except Exception as e:
+            print("Monitor error:", e)
+        finally:
+            session.close()
+
+        time.sleep(30)
+
+threading.Thread(target=monitor_orders, daemon=True).start()
 # Start bot
 bot.polling()
