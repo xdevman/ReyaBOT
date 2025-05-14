@@ -5,7 +5,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
 from dotenv import load_dotenv
 # from rsdk import cprice
-from rapi import Get_Reya_api,get_price,Get_orders, get_symbol, get_ticker_by_market_id
+from rapi import Get_Reya_api,get_price,Get_orders, get_symbol, get_ticker_by_market_id, save_latest_orderid
 from database2 import *
 from elixir_api import update_elixir_rank
 
@@ -24,12 +24,35 @@ PROXY = os.getenv("PROXY")
 # Initialize bot
 bot = telebot.TeleBot(TOKEN)
 
-# start و help
+# start - help
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     user_id = message.from_user.id
     add_new_user(user_id)
     bot.reply_to(message, "Welcome! Use /price [coin] to get price info.")
+
+
+@bot.message_handler(commands=['alarm'])
+def handle_alarm(message):
+    user_id = message.from_user.id
+    
+    addr_result = get_wallet_address(user_id)
+
+    print("addr: ",addr_result)
+
+    if addr_result == "null":
+        bot.reply_to(message, "Wallet address not implemented. Please use /address to add your wallet address.")
+    
+    result = save_latest_orderid(user_id,addr_result)
+
+    if result is True:
+        bot.reply_to(message, "🔔 Alarm is now ON.")
+    elif result is False:
+        bot.reply_to(message, "🔕 Alarm is now OFF.")
+    elif result is None:
+        bot.reply_to(message, "❌ You are not registered.")
+    else:
+        bot.reply_to(message, f"⚠️ Error: {result}")
 
 
 @bot.message_handler(commands=['price','p'])

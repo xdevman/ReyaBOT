@@ -1,6 +1,8 @@
 import requests
 import json
 
+from reyabot.database2 import switch_alarm_status, update_order_id
+
 
 def Get_Reya_api(wallet_address):
     
@@ -103,3 +105,20 @@ def get_symbol(symbol):
         if t.startswith(symbol):
             return entry["ticker"]
     return None
+
+def save_latest_orderid(userid,wallet_address):
+    result = switch_alarm_status(userid)
+    if result is True:
+        url = f"https://api.reya.xyz/api/conditional-orders/get-orders-by-wallet/{wallet_address}"
+        r = requests.get(url)
+
+        if r.status_code == 200:
+            data = r.json()
+            print(data, data[0]["orderId"])
+            result_orderid = update_order_id(userid, data[0]["orderId"])
+            if result_orderid:
+                return True
+        else:
+            return None
+    else: 
+        return False

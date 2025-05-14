@@ -1,7 +1,7 @@
 import sqlite3
 
 from time import time
-from sqlalchemy import create_engine, Column, Integer, String, BigInteger
+from sqlalchemy import Boolean, create_engine, Column, Integer, String, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
@@ -23,7 +23,8 @@ class User(Base):
     joined = Column(BigInteger, nullable=False)
     elixir_username = Column(String, default=None) 
     rank = Column(Integer, default=None)  
-
+    alarm = Column(Boolean, default=False)  # Track if user has alarm enabled
+    orderid = Column(String, default=None)  # Store the last seen order ID
 Base.metadata.create_all(engine)
 
 def add_new_user(user_id):
@@ -91,6 +92,7 @@ def get_elixir_rank(user_id):
             return None
     except SQLAlchemyError as e:
         return f"Error: {e}"
+
 def update_user_rank(user_id, rank):
     try:
         user = session.query(User).filter_by(userid=user_id).first()
@@ -98,6 +100,35 @@ def update_user_rank(user_id, rank):
             user.rank = rank
             session.commit()
             return "Rank updated successfully"
+        else:
+            return "User not found"
+    except SQLAlchemyError as e:
+        session.rollback()
+        return f"Error: {e}"
+
+
+# setup alarm
+
+def switch_alarm_status(user_id):
+    try:
+        user = session.query(User).filter_by(userid=user_id).first()
+        if user:
+            user.alarm = not user.alarm  # Flip True/False
+            session.commit()
+            return user.alarm
+        else:
+            return None
+    except SQLAlchemyError as e:
+        session.rollback()
+        return f"Error: {e}"
+    
+def update_order_id(user_id, new_order_id):
+    try:
+        user = session.query(User).filter_by(userid=user_id).first()
+        if user:
+            user.orderid = new_order_id
+            session.commit()
+            return True
         else:
             return "User not found"
     except SQLAlchemyError as e:
