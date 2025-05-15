@@ -278,7 +278,7 @@ def monitor_orders():
                                     )
                                 else:
                                     msg = (
-                                        f"💥 Liquidation Alert!\n"
+                                        f"Alert!\n"
                                         f"Market: {market}\n"
                                         f"Price: {price}\n"
                                         f"Order Type: {order_type}"
