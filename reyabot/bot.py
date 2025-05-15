@@ -257,14 +257,37 @@ def monitor_orders():
                     new_orders = orders[:index]
 
                     if new_orders:
-                        print(f"✅ Found {len(new_orders)} new order(s):")
                         for order in new_orders:
-                            print(order['orderId'])
-                            bot.send_message(user_id, f"🚨 New order detected!\nOrder ID: {order}")
-                    # Notify user about the new order
+
+                            if order['status'] == "filled":
+                                order_type = order['orderType']
+                                price = order['price']
+                                market = order['marketId']
+
+                                if order_type == "Take Profit":
+                                    msg = (
+                                        f"🎯 Take Profit Hit!\n"
+                                        f"Market: {market}\n"
+                                        f"Price: {price}"
+                                    )
+                                elif order_type == "Stop Loss":
+                                    msg = (
+                                        f"🛑 Stop Loss Triggered!\n"
+                                        f"Market: {market}\n"
+                                        f"Price: {price}"
+                                    )
+                                else:
+                                    msg = (
+                                        f"💥 Liquidation Alert!\n"
+                                        f"Market: {market}\n"
+                                        f"Price: {price}\n"
+                                        f"Order Type: {order_type}"
+                                    )
+
+                                bot.send_message(user_id, msg)
                     
                     update_order_id(user_id, current_latest_id)
-                    # bot.send_message(user_id, f"🚨 New order detected!\nOrder ID: {latest_order}")
+                    
         except Exception as e:
             print("Monitor error:", e)
 
