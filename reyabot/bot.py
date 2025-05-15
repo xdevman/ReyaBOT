@@ -257,10 +257,11 @@ def monitor_orders():
                     print("current_latest_id:",current_latest_id,type(current_latest_id))
                     print("latest_saved_id:",latest_saved_id,type(latest_saved_id))
 
-                    index = next((i for i, o in enumerate(orders) if o["timestampMs"] > int(latest_saved_id)), len(orders))
+                    # index = next((i for i, o in enumerate(orders) if o["timestampMs"] > int(latest_saved_id)), len(orders))
                     # Get new orders from index 0 up to the last seen index
-                    new_orders = orders[:index]
-                    print("before new order")
+                    # new_orders = orders[:index]
+                    new_orders = [o for o in orders if o["timestampMs"] > int(latest_saved_id)]
+                    print("before new order",new_orders)
                     if new_orders:
                         print("new_order condition")
                         for order in new_orders:
