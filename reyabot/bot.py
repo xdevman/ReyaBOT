@@ -263,7 +263,7 @@ def monitor_orders():
                                 order_type = order['orderType']
                                 price = order['price']
                                 market = order['marketId']
-
+                                market = get_ticker_by_market_id(market)
                                 if order_type == "Take Profit":
                                     msg = (
                                         f"🎯 Take Profit Hit!\n"
@@ -275,6 +275,13 @@ def monitor_orders():
                                         f"🛑 Stop Loss Triggered!\n"
                                         f"Market: {market}\n"
                                         f"Price: {price}"
+                                    )
+                                elif order_type == "Limit Order":
+                                    msg = (
+                                        f"Limit Order Filled!\n"
+                                        f"Market: {market}\n"
+                                        f"Price: {price}\n"
+                                        f"Order Type: {order_type}"
                                     )
                                 else:
                                     msg = (
