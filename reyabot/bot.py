@@ -240,15 +240,15 @@ def monitor_orders():
 
                 # Replace this with your real function to get all recent orders
                 orders = get_transactions(wallet)  # ← you must define or use existing function
-                print("orders:",orders)
+                # print("orders:",orders)
                 if not orders:
                     continue
 
                 # Assume the latest order is first (sorted descending by time)
                 latest_order = orders[0]
-                print("latest_order:",latest_order)
-                current_latest_id = latest_order['orderid']
-                print("current_latest_id:",current_latest_id)
+                # print("latest_order:",latest_order)
+                current_latest_id = latest_order['orderId']
+                # print("current_latest_id:",current_latest_id)
 
                 # If first time, just store and skip alert
                 # if latest_saved_id is None:
