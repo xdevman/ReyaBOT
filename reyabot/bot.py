@@ -257,6 +257,7 @@ def monitor_orders():
                     new_orders = orders[:index]
 
                     if new_orders:
+                        update_order_id(user_id, current_latest_id)
                         for order in new_orders:
 
                             if order['status'] == "filled":
@@ -290,10 +291,10 @@ def monitor_orders():
                                         f"Price: {price}\n"
                                         f"Order Type: {order_type}"
                                     )
-
+                                print("ready to send", msg)
                                 bot.send_message(user_id, msg)
                     
-                    update_order_id(user_id, current_latest_id)
+                    # update_order_id(user_id, current_latest_id)
                     
         except Exception as e:
             print("Monitor error:", e)

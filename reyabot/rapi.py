@@ -137,6 +137,8 @@ def get_transactions(wallet_address):
             if len(data) == 0:
                 return None
             return data
+        else:
+            print("status error", r.status_code)
     except Exception as e:
         
         return f"Error: {e}"
