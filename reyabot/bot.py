@@ -251,8 +251,8 @@ def monitor_orders():
           
 
                 # If new order detected
-                if str(current_latest_id) != str(latest_saved_id):
-                    index = next((i for i, o in enumerate(orders) if o["orderId"] == latest_saved_id), len(orders))
+                if int(current_latest_id) != int(latest_saved_id):
+                    index = next((i for i, o in enumerate(orders) if o["timestampMs"] == latest_saved_id), len(orders))
                     # Get new orders from index 0 up to the last seen index
                     new_orders = orders[:index]
 
