@@ -257,7 +257,7 @@ def monitor_orders():
 
                 # If new order detected
                 if current_latest_id != latest_saved_id:
-                    update_order_id(user_id, current_latest_id, session)
+                    update_order_id(user_id, current_latest_id)
 
                     # Notify user about the new order
                     bot.send_message(user_id, f"🚨 New order detected!\nOrder ID: {current_latest_id}")
