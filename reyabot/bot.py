@@ -263,7 +263,7 @@ def monitor_orders():
         finally:
             session.close()
 
-        time.sleep(30)
+        sleep(3)
 
 threading.Thread(target=monitor_orders, daemon=True).start()
 # Start bot
