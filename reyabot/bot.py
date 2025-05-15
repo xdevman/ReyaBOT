@@ -297,45 +297,45 @@ def monitor_orders():
 
                         update_order_id(user_id, current_latest_id,current_latest_status)
                 elif  current_latest_id == latest_saved_id and current_latest_status != latest_saved_status:
-
+                    print ("here is second condition")
                     if order['status'] == "filled":
-                                order_type = order['orderType']
-                                price = order['price']
-                                market = order['marketId']
-                                market = get_ticker_by_market_id(market)
-                                if order_type == "Take Profit":
-                                    msg = (
-                                        f"🎯 Take Profit Hit!\n"
-                                        f"Market: {market}\n"
-                                        f"Price: {price}"
-                                    )
-                                elif order_type == "Stop Loss":
-                                    msg = (
-                                        f"🛑 Stop Loss Triggered!\n"
-                                        f"Market: {market}\n"
-                                        f"Price: {price}"
-                                    )
-                                elif order_type == "Limit Order":
-                                    msg = (
-                                        f"Limit Order Filled!\n"
-                                        f"Market: {market}\n"
-                                        f"Price: {price}\n"
-                                        f"Order Type: {order_type}"
-                                    )
-                                else:
-                                    msg = (
-                                        f"Alert!\n"
-                                        f"Market: {market}\n"
-                                        f"Price: {price}\n"
-                                        f"Order Type: {order_type}"
-                                    )
+                        order_type = order['orderType']
+                        price = order['price']
+                        market = order['marketId']
+                        market = get_ticker_by_market_id(market)
+                        if order_type == "Take Profit":
+                            msg = (
+                                f"🎯 Take Profit Hit!\n"
+                                f"Market: {market}\n"
+                                f"Price: {price}"
+                            )
+                        elif order_type == "Stop Loss":
+                            msg = (
+                                f"🛑 Stop Loss Triggered!\n"
+                                f"Market: {market}\n"
+                                f"Price: {price}"
+                            )
+                        elif order_type == "Limit Order":
+                            msg = (
+                                f"Limit Order Filled!\n"
+                                f"Market: {market}\n"
+                                f"Price: {price}\n"
+                                f"Order Type: {order_type}"
+                            )
+                        else:
+                            msg = (
+                                f"Alert!\n"
+                                f"Market: {market}\n"
+                                f"Price: {price}\n"
+                                f"Order Type: {order_type}"
+                            )
 
-                                bot.send_message(user_id, msg)
+                        bot.send_message(user_id, msg)
 
                     update_order_id(user_id, current_latest_id,current_latest_status)
 
 
-                    
+
         except Exception as e:
             print("Monitor error:", e)
 
