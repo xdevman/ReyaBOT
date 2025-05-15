@@ -141,3 +141,11 @@ def update_order_id(user_id, new_order_id):
     except SQLAlchemyError as e:
         session.rollback()
         return f"Error: {e}"
+
+def active_alarm_users():
+    try:
+        return session.query(User).filter(User.alarm == True).all()
+    
+    except SQLAlchemyError as e:
+        session.rollback()
+        return f"Error: {e}"

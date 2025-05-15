@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import threading
+from time import sleep
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
@@ -231,10 +232,10 @@ def send_links(message):
 def monitor_orders():
     while True:
         try:
-            users = session.query(User).filter(User.alarm == True).all()
+            users = active_alarm_users()
             for user in users:
                 wallet = user.wallet_address
-                user_id = user.user_id
+                user_id = user.userid
                 latest_saved_id = user.orderid
 
                 # Replace this with your real function to get all recent orders
