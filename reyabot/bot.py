@@ -251,7 +251,7 @@ def monitor_orders():
           
 
                 # If new order detected
-                if current_latest_id != latest_saved_id:
+                if str(current_latest_id) != str(latest_saved_id):
                     index = next((i for i, o in enumerate(orders) if o["orderId"] == latest_saved_id), len(orders))
                     # Get new orders from index 0 up to the last seen index
                     new_orders = orders[:index]
@@ -293,7 +293,7 @@ def monitor_orders():
 
                                 bot.send_message(user_id, msg)
                     
-                    update_order_id(user_id, current_latest_id)
+                        update_order_id(user_id, current_latest_id)
                     
         except Exception as e:
             print("Monitor error:", e)
