@@ -251,14 +251,15 @@ def monitor_orders():
               
                 current_latest_id = latest_order['timestampMs']
                 current_latest_status = latest_order['status']
-
+                
                 # If new order detected
-                if int(current_latest_id) != int(latest_saved_id):
+                if int(current_latest_id) > int(latest_saved_id):
                     index = next((i for i, o in enumerate(orders) if o["timestampMs"] > int(latest_saved_id)), len(orders))
                     # Get new orders from index 0 up to the last seen index
                     new_orders = orders[:index]
-
+                    print("before new order")
                     if new_orders:
+                        print("new_order condition")
                         for order in new_orders:
 
                             if order['status'] == "filled":
