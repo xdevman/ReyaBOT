@@ -246,21 +246,25 @@ def monitor_orders():
 
                 # Assume the latest order is first (sorted descending by time)
                 latest_order = orders[0]
-                # print("latest_order:",latest_order)
+              
                 current_latest_id = latest_order['orderId']
-                # print("current_latest_id:",current_latest_id)
-
-                # If first time, just store and skip alert
-                # if latest_saved_id is None:
-                #     update_order_id(user_id, current_latest_id, session)
-                #     continue
+          
 
                 # If new order detected
                 if current_latest_id != latest_saved_id:
-                    update_order_id(user_id, current_latest_id)
+                    index = next((i for i, o in enumerate(orders) if o["orderId"] == latest_saved_id), len(orders))
+                    # Get new orders from index 0 up to the last seen index
+                    new_orders = orders[:index]
 
+                    if new_orders:
+                        print(f"✅ Found {len(new_orders)} new order(s):")
+                        for order in new_orders:
+                            print(order['orderId'])
+                            bot.send_message(user_id, f"🚨 New order detected!\nOrder ID: {order}")
                     # Notify user about the new order
-                    bot.send_message(user_id, f"🚨 New order detected!\nOrder ID: {current_latest_id}")
+                    
+                    update_order_id(user_id, current_latest_id)
+                    # bot.send_message(user_id, f"🚨 New order detected!\nOrder ID: {latest_order}")
         except Exception as e:
             print("Monitor error:", e)
 
