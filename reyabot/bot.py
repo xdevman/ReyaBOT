@@ -240,13 +240,15 @@ def monitor_orders():
 
                 # Replace this with your real function to get all recent orders
                 orders = get_transactions(wallet)  # ← you must define or use existing function
-
+                print("orders:",orders)
                 if not orders:
                     continue
 
                 # Assume the latest order is first (sorted descending by time)
                 latest_order = orders[0]
+                print("latest_order:",latest_order)
                 current_latest_id = latest_order['orderid']
+                print("current_latest_id:",current_latest_id)
 
                 # If first time, just store and skip alert
                 # if latest_saved_id is None:
@@ -261,8 +263,7 @@ def monitor_orders():
                     bot.send_message(user_id, f"🚨 New order detected!\nOrder ID: {current_latest_id}")
         except Exception as e:
             print("Monitor error:", e)
-        finally:
-            session.close()
+
 
         sleep(3)
 
