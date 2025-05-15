@@ -25,6 +25,7 @@ class User(Base):
     rank = Column(Integer, default=None)  
     alarm = Column(Boolean, default=False)  # Track if user has alarm enabled
     orderid = Column(String, default=None)  # Store the last seen order ID
+    statusid = Column(String, default=None)  # Store the status 
 Base.metadata.create_all(engine)
 
 def add_new_user(user_id):
@@ -129,11 +130,12 @@ def get_latest_order_id(user_id):
     return user.orderid if user else None
 
 
-def update_order_id(user_id, new_order_id):
+def update_order_id(user_id, new_order_id,new_status):
     try:
         user = session.query(User).filter_by(userid=user_id).first()
         if user:
             user.orderid = new_order_id
+            user.statusid = new_status
             session.commit()
             return True
         else:

@@ -229,6 +229,8 @@ def send_links(message):
 
     bot.send_message(message.chat.id, "🔗 **Reya Information**", reply_markup=markup, parse_mode="Markdown")
 
+def send_alarm():
+    pass
 def monitor_orders():
     while True:
         try:
@@ -237,7 +239,7 @@ def monitor_orders():
                 wallet = user.wallet_address
                 user_id = user.userid
                 latest_saved_id = user.orderid
-
+                latest_saved_status = user.statusid
                 # Replace this with your real function to get all recent orders
                 orders = get_transactions(wallet)  # ← you must define or use existing function
                 # print("orders:",orders)
@@ -247,12 +249,12 @@ def monitor_orders():
                 # Assume the latest order is first (sorted descending by time)
                 latest_order = orders[0]
               
-                current_latest_id = latest_order['timestampMs']
-          
+                current_latest_id = latest_order['orderId']
+                current_latest_status = latest_order['status']
 
                 # If new order detected
-                if int(current_latest_id) != int(latest_saved_id):
-                    index = next((i for i, o in enumerate(orders) if o["timestampMs"] == int(latest_saved_id)), len(orders))
+                if current_latest_id != latest_saved_id:
+                    index = next((i for i, o in enumerate(orders) if o["orderId"] == latest_saved_id), len(orders))
                     # Get new orders from index 0 up to the last seen index
                     new_orders = orders[:index]
 
@@ -292,8 +294,47 @@ def monitor_orders():
                                     )
 
                                 bot.send_message(user_id, msg)
-                    
-                        update_order_id(user_id, current_latest_id)
+
+                        update_order_id(user_id, current_latest_id,current_latest_status)
+                elif  current_latest_id == latest_saved_id and current_latest_status != latest_saved_status:
+
+                    if order['status'] == "filled":
+                                order_type = order['orderType']
+                                price = order['price']
+                                market = order['marketId']
+                                market = get_ticker_by_market_id(market)
+                                if order_type == "Take Profit":
+                                    msg = (
+                                        f"🎯 Take Profit Hit!\n"
+                                        f"Market: {market}\n"
+                                        f"Price: {price}"
+                                    )
+                                elif order_type == "Stop Loss":
+                                    msg = (
+                                        f"🛑 Stop Loss Triggered!\n"
+                                        f"Market: {market}\n"
+                                        f"Price: {price}"
+                                    )
+                                elif order_type == "Limit Order":
+                                    msg = (
+                                        f"Limit Order Filled!\n"
+                                        f"Market: {market}\n"
+                                        f"Price: {price}\n"
+                                        f"Order Type: {order_type}"
+                                    )
+                                else:
+                                    msg = (
+                                        f"Alert!\n"
+                                        f"Market: {market}\n"
+                                        f"Price: {price}\n"
+                                        f"Order Type: {order_type}"
+                                    )
+
+                                bot.send_message(user_id, msg)
+
+                    update_order_id(user_id, current_latest_id,current_latest_status)
+
+
                     
         except Exception as e:
             print("Monitor error:", e)

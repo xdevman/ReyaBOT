@@ -118,8 +118,10 @@ def save_latest_orderid(userid,wallet_address):
             if len(data) == 0:
                 return True
             
-            # print(data, data[0]["orderId"])
-            result_orderid = update_order_id(userid, data[0]["timestampMs"])
+            if data[0]['status'] == "pending":
+                return None
+            
+            result_orderid = update_order_id(userid, data[0]["orderId"],data[0]["status"])
             if result_orderid:
                 return True
         else:
